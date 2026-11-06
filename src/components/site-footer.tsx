@@ -1,6 +1,6 @@
 import { BRAND, WHATSAPP_DISPLAY, WHATSAPP_NUMBER } from "@/lib/config";
 import { MessageCircle, Instagram } from "lucide-react";
-import logoUrl from "@/assets/acha-busca-icon.png";
+import logoUrl from "@/assets/inspire-se-icon.png";
 
 const MVX_INSTAGRAM = "https://www.instagram.com/mvx_sistemas/";
 const MVX_WHATSAPP_1 = { display: "(87) 99168-6116", link: "5587991686116" };

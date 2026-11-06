@@ -38,7 +38,7 @@
   --color-navy-foreground: var(--navy-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
-  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", "Didot", Georgia, serif;
   --font-sans: "Poppins", "Nunito", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -46,31 +46,31 @@
   --radius: 0.75rem;
   /* Orange & White palette */
   --background: oklch(1 0 0);                   /* pure white app bg */
-  --foreground: oklch(0.2 0.01 60);             /* near-black text */
+  --foreground: #000000;             /* near-black text */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.01 60);
+  --card-foreground: #000000;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.01 60);
+  --popover-foreground: #000000;
   /* Primary = orange (#FF5500) */
-  --primary: #FF5500;
-  --primary-foreground: #FFFFFF;
+  --primary: #CCFF00;
+  --primary-foreground: #000000;
   /* Secondary = soft warm neutral */
   --secondary: oklch(0.97 0.01 60);
-  --secondary-foreground: oklch(0.2 0.01 60);
+  --secondary-foreground: #000000;
   --muted: oklch(0.97 0.006 60);
   --muted-foreground: oklch(0.5 0.02 60);
-  --accent: oklch(0.96 0.04 45);
-  --accent-foreground: #FF5500;
+  --accent: oklch(0.97 0.08 120);
+  --accent-foreground: #000000;
   /* Destructive tuned to orange family (no red borders) */
-  --destructive: #FF5500;
+  --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: #FFFFFF;
   --border: #D1D5DB;
   --input: #D1D5DB;
-  --ring: #FF5500;
-  --brand: #FF5500;
-  --brand-foreground: #FFFFFF;
+  --ring: #000000;
+  --brand: #CCFF00;
+  --brand-foreground: #000000;
   /* "navy" token repurposed as neutral dark for surfaces that used it */
-  --navy: oklch(0.2 0.01 60);
+  --navy: #000000;
   --navy-foreground: #FFFFFF;
   --success: oklch(0.62 0.15 155);
   --warning: oklch(0.72 0.15 75);
@@ -83,21 +83,21 @@
   --card-foreground: oklch(0.98 0.003 80);
   --popover: oklch(0.22 0.006 60);
   --popover-foreground: oklch(0.98 0.003 80);
-  --primary: #FF5500;
-  --primary-foreground: #FFFFFF;
+  --primary: #CCFF00;
+  --primary-foreground: #000000;
   --secondary: oklch(0.28 0.008 60);
   --secondary-foreground: oklch(0.98 0.003 80);
   --muted: oklch(0.26 0.008 60);
   --muted-foreground: oklch(0.72 0.01 60);
   --accent: oklch(0.32 0.05 45);
   --accent-foreground: #FFFFFF;
-  --destructive: #FF5500;
+  --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: #FFFFFF;
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: #FF5500;
-  --brand: #FF5500;
-  --brand-foreground: #FFFFFF;
+  --ring: #000000;
+  --brand: #CCFF00;
+  --brand-foreground: #000000;
   --navy: oklch(0.24 0.008 60);
   --navy-foreground: oklch(0.98 0.003 80);
   --success: oklch(0.7 0.15 155);
@@ -134,7 +134,7 @@
   }
 
   h1, h2, h3, h4 {
-    letter-spacing: -0.015em;
+    letter-spacing: -0.005em;
     font-family: var(--font-display);
   }
 
@@ -153,7 +153,7 @@
 @utility font-display {
   font-family: var(--font-display);
   font-optical-sizing: auto;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 @utility container-page {
@@ -274,3 +274,8 @@ iframe[src*="lovable.dev/badge"] {
   height: 0 !important;
 }
 /* NEXUS-PRO:WATERMARK-HIDE:END */
+
+/* Lime neon is too light for text on white: darken primary-colored text in light mode */
+:root:not(.dark) .text-primary:not(header *):not(.bg-primary-foreground) {
+  color: oklch(0.55 0.17 128);
+}

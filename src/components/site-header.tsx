@@ -9,7 +9,7 @@ import { BRAND } from "@/lib/config";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeToggle } from "@/components/theme-toggle";
-import logoUrl from "@/assets/acha-busca-icon.png";
+import logoUrl from "@/assets/inspire-se-icon.png";
 
 export function SiteHeader() {
   const { count, setOpen } = useCart();
@@ -43,15 +43,9 @@ export function SiteHeader() {
           />
 
           <div className="flex min-w-0 flex-col leading-none">
-            <h1 className="truncate font-display text-lg font-extrabold tracking-tighter text-white sm:text-2xl md:text-3xl">
-              acha<span className="mx-[1px] font-bold text-white/60">&amp;</span>busca
+            <h1 className="truncate font-display text-lg font-semibold uppercase tracking-wide text-primary-foreground sm:text-2xl md:text-3xl">
+              Inspire-se
             </h1>
-            <div className="mt-1 flex items-center gap-1.5 sm:mt-1.5 sm:gap-2">
-              <span className="h-px w-4 bg-white/40 sm:w-5" />
-              <span className="font-display text-[8px] font-bold uppercase tracking-[0.3em] text-white/90 sm:text-[10px] sm:tracking-[0.35em]">
-                Atacado
-              </span>
-            </div>
           </div>
         </Link>
 
@@ -73,7 +67,7 @@ export function SiteHeader() {
           {!session && (
             <Link
               to="/auth"
-              className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-white hover:bg-white/15"
+              className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-primary-foreground hover:bg-black/10"
             >
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Entrar</span>
@@ -83,7 +77,7 @@ export function SiteHeader() {
             <div className="flex items-center gap-1 sm:gap-2">
               <Link
                 to="/perfil"
-                className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-white hover:bg-white/15"
+                className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-primary-foreground hover:bg-black/10"
               >
                 <User className="h-4 w-4" />
                 <span className="hidden md:inline">Minha Conta</span>
@@ -92,7 +86,7 @@ export function SiteHeader() {
               {canSeePanel && (
                 <Link
                   to="/admin"
-                  className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-white hover:bg-white/15"
+                  className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-primary-foreground hover:bg-black/10"
                 >
                   <span>Painel</span>
                 </Link>
@@ -102,7 +96,7 @@ export function SiteHeader() {
                 onClick={async () => {
                   await supabase.auth.signOut();
                 }}
-                className="rounded-full p-2 text-white/80 hover:bg-white/15 hover:text-white"
+                className="rounded-full p-2 text-primary-foreground/80 hover:bg-black/10 hover:text-primary-foreground"
                 aria-label="Sair"
               >
                 <LogOut className="h-4 w-4" />
@@ -112,12 +106,12 @@ export function SiteHeader() {
           <ThemeToggle />
           <button
             onClick={() => setOpen(true)}
-            className="relative rounded-full p-2 text-white transition-colors hover:bg-white/15 sm:p-2.5"
+            className="relative rounded-full p-2 text-primary-foreground transition-colors hover:bg-black/10 sm:p-2.5"
             aria-label="Carrinho"
           >
             <ShoppingBag className="h-5 w-5" />
             {count > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-white px-1 text-[10px] font-bold text-primary">
+              <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-primary-foreground px-1 text-[10px] font-bold text-primary">
                 {count}
               </span>
             )}
@@ -150,8 +144,8 @@ export function SiteHeader() {
                 search={{} as never}
                 className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors sm:px-5 sm:text-xs sm:tracking-[0.18em] ${
                   currentPath === "/produtos" && !currentSearch?.cat && !currentSearch?.promo
-                    ? "bg-white text-primary"
-                    : "text-white/85 hover:bg-white/15 hover:text-white"
+                    ? "bg-primary-foreground text-primary"
+                    : "text-primary-foreground/85 hover:bg-black/10 hover:text-primary-foreground"
                 }`}
               >
                 Todos os produtos
@@ -165,8 +159,8 @@ export function SiteHeader() {
                     search={{ cat: c.slug } as never}
                     className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors sm:px-5 sm:text-xs sm:tracking-[0.18em] ${
                       active
-                        ? "bg-white text-primary"
-                        : "text-white/85 hover:bg-white/15 hover:text-white"
+                        ? "bg-primary-foreground text-primary"
+                        : "text-primary-foreground/85 hover:bg-black/10 hover:text-primary-foreground"
                     }`}
                   >
                     {c.nome}
@@ -178,8 +172,8 @@ export function SiteHeader() {
                 search={{ promo: true } as never}
                 className={`shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors sm:px-5 sm:text-xs sm:tracking-[0.18em] ${
                   currentSearch?.promo
-                    ? "bg-white text-primary"
-                    : "text-white/85 hover:bg-white/15 hover:text-white"
+                    ? "bg-primary-foreground text-primary"
+                    : "text-primary-foreground/85 hover:bg-black/10 hover:text-primary-foreground"
                 }`}
               >
                 Promoções
