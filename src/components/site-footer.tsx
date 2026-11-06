@@ -19,7 +19,7 @@ export function SiteFooter() {
             />
             <div className="min-w-0">
               <span className="font-display text-lg font-extrabold tracking-tight">
-                acha&amp;busca
+                INSPIRE-SE
               </span>
               <p className="mt-0.5 text-xs text-white/80">
                 Fabricação própria · Envio para todo o Brasil · Mínimo 10 peças
