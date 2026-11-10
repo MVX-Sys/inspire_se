@@ -45,7 +45,7 @@ export const ProductCard = memo(function ProductCard({
       params={{ id: p.id }}
       className="group block focus:outline-none"
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative aspect-[4/5] overflow-hidden bg-showcase">
         {img ? (
           <img
             src={img}
@@ -74,14 +74,14 @@ export const ProductCard = memo(function ProductCard({
             </span>
           ) : (
             <>
-              {p.novidade && (
-                <span className="rounded-full bg-navy/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-navy-foreground shadow-sm backdrop-blur-sm">
-                  Novidade
+              {promo.ativa && (
+                <span className="bg-foreground px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-background">
+                  {promo.percentual}% OFF
                 </span>
               )}
-              {promo.ativa && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-md shadow-primary/30">
-                  -{promo.percentual}%
+              {p.novidade && (
+                <span className="bg-primary px-2 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-primary-foreground">
+                  Novidade
                 </span>
               )}
             </>
@@ -97,31 +97,29 @@ export const ProductCard = memo(function ProductCard({
         )}
       </div>
 
-      <div className="mt-3.5 space-y-1 px-0.5">
-        <h3 className={`line-clamp-1 text-[13px] font-semibold leading-snug tracking-tight transition-colors sm:text-sm ${esgotado ? "text-muted-foreground" : "text-foreground group-hover:text-primary"}`}>
+      <div className="mt-3 space-y-1 px-0.5 text-center">
+        <h3 className={`line-clamp-1 text-[13px] font-medium leading-snug transition-colors sm:text-sm ${esgotado ? "text-muted-foreground" : "text-foreground group-hover:text-primary"}`}>
           {p.nome}
         </h3>
-        
         {promo.ativa && !esgotado ? (
-          <div className="space-y-0.5">
-            <div className="flex items-baseline gap-2">
-              <p className="font-display text-base font-extrabold tabular-nums text-primary">
-                {brl(promo.precoFinal)}
-              </p>
-              <p className="text-xs font-medium tabular-nums text-muted-foreground line-through">
-                {brl(promo.precoOriginal)}
-              </p>
-            </div>
-            {promo.validoAte && (
-              <p className="text-[10px] font-medium text-muted-foreground">
-                Termina em {Math.ceil((promo.validoAte.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} dias
-              </p>
-            )}
+          <div className="flex items-baseline justify-center gap-2">
+            <p className="text-xs tabular-nums text-muted-foreground line-through">{brl(promo.precoOriginal)}</p>
+            <p className="text-base font-bold tabular-nums text-foreground">{brl(promo.precoFinal)}</p>
           </div>
         ) : (
-          <p className={`font-display text-base font-extrabold tabular-nums ${esgotado ? "text-muted-foreground line-through" : "text-foreground"}`}>
+          <p className={`text-base font-bold tabular-nums ${esgotado ? "text-muted-foreground line-through" : "text-foreground"}`}>
             {brl(p.preco)}
           </p>
+        )}
+        {!esgotado && (
+          <p className="text-[11px] tabular-nums text-muted-foreground">
+            Até 12x de {brl((promo.ativa ? promo.precoFinal : p.preco) / 12)}
+          </p>
+        )}
+        {!esgotado && (promo.ativa || p.novidade) && (
+          <span className="inline-block rounded-full bg-foreground px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] text-background">
+            {promo.ativa ? "Oferta" : "Lançamento"}
+          </span>
         )}
       </div>
     </Link>

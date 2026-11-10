@@ -39,11 +39,20 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --font-display: "Playfair Display", "Didot", Georgia, serif;
+  --font-impact: "Anton", "Bebas Neue", Impact, sans-serif;
+  --color-hot: var(--hot);
+  --color-showcase: var(--showcase);
+  --color-lime: var(--lime);
+  --color-hot-foreground: var(--hot-foreground);
   --font-sans: "Poppins", "Nunito", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.75rem;
+  --hot: #E8213A;
+  --showcase: #E6E6E6;
+  --lime: #CCFF00;
+  --hot-foreground: #FFFFFF;
   /* Orange & White palette */
   --background: oklch(1 0 0);                   /* pure white app bg */
   --foreground: #000000;             /* near-black text */
@@ -278,4 +287,19 @@ iframe[src*="lovable.dev/badge"] {
 /* Lime neon is too light for text on white: darken primary-colored text in light mode */
 :root:not(.dark) .text-primary:not(header *):not(.bg-primary-foreground) {
   color: oklch(0.55 0.17 128);
+}
+
+@utility font-impact {
+  font-family: var(--font-impact);
+  letter-spacing: 0.01em;
+}
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@utility animate-marquee {
+  animation: marquee-x 40s linear infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
 }

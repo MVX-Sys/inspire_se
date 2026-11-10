@@ -7,10 +7,12 @@ import { SiteFooter } from "@/components/site-footer";
 import { CartDrawer } from "@/components/cart-drawer";
 import { ProductCard } from "@/components/product-card";
 import { listCategoriasFn, listProdutosFn } from "@/lib/products.functions";
+import logoInspire from "@/assets/inspire-se-icon.png";
 import regataCapa from "@/assets/regata-capa.jpg.asset.json";
 import { isEsgotado, type ProductListItem, type Categoria, getPromoInfo } from "@/lib/products";
 import { getSiteConfig } from "@/lib/config-site";
 import { getImageUrl } from "@/lib/storage";
+import { brl } from "@/lib/format";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -28,12 +30,12 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "ACHAEBUSCA — Atacado para todo o Brasil" },
+      { title: "INSPIRE-SE — Ofertas e mais vendidos" },
       {
         name: "description",
-        content: "Acha & Busca Atacado — atacado para todo o Brasil.",
+        content: "INSPIRE-SE: ofertas, lançamentos e os mais vendidos da semana.",
       },
-      { property: "og:title", content: "ACHAEBUSCA — Atacado para todo o Brasil" },
+      { property: "og:title", content: "INSPIRE-SE — Ofertas e mais vendidos" },
       { property: "og:description", content: "Atacado para todo o Brasil: novidades e ofertas." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -81,14 +83,14 @@ function Home() {
   }, [produtos, config?.destaques_ofertas]);
 
   return (
-    <div className="min-h-screen bg-background font-body">
+    <div className="dark min-h-screen bg-background font-body text-foreground">
       <SiteHeader />
       
-      <HeroSection config={config} />
+      <HeroSection config={config} produtos={produtos} />
 
       <main>
         <ProductSection 
-          title={["Novidades", ""]} 
+          title={["Mais", "Vendidos"]} 
           highlightIndex={0} 
           products={novidades} 
           emptyMessage="Não há novidades disponíveis no momento"
@@ -111,127 +113,105 @@ function Home() {
   );
 }
 
-function HeroSection({ config }: { config?: any }) {
+const BAND_ITEMS = ["Frete para todo o Brasil", "Até durar o estoque", "Ofertas da semana", "INSPIRE-SE", "Novidades toda semana"];
+
+function Band({ className, reverse }: { className: string; reverse?: boolean }) {
+  const items = [...BAND_ITEMS, ...BAND_ITEMS, ...BAND_ITEMS, ...BAND_ITEMS];
+  return (
+    <div className={`pointer-events-none absolute left-[-10%] z-10 w-[120%] overflow-hidden py-2 md:py-3 ${className}`} aria-hidden>
+      <div className={`flex w-max animate-marquee gap-8 whitespace-nowrap ${reverse ? "[animation-direction:reverse]" : ""}`}>
+        {items.map((t, i) => (
+          <span key={i} className="flex items-center gap-8 font-impact text-sm uppercase md:text-2xl">
+            {t}<span className="opacity-60">•</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HeroSection({ config, produtos }: { config?: any; produtos: ProductListItem[] }) {
   const slides = config?.hero_slides || [];
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     if (slides.length <= 1) return;
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 8000);
+    const timer = setInterval(() => setCurrent((prev) => (prev + 1) % slides.length), 8000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  if (slides.length === 0) return null;
+  const menorPreco = useMemo(() => {
+    const precos = produtos
+      .filter((p) => p.ativo && !isEsgotado(p))
+      .map((p) => (getPromoInfo(p).ativa ? getPromoInfo(p).precoFinal : p.preco));
+    return precos.length ? Math.min(...precos) : null;
+  }, [produtos]);
 
+  const slide = slides[current];
+  const titulo: string = slide?.titulo || "Ofertas INSPIRE-SE";
+  const palavras = titulo.split(" ");
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <section className="relative aspect-[2/1] w-full overflow-hidden bg-navy md:aspect-auto md:h-[85vh] md:min-h-[600px]">
-      <AnimatePresence mode="wait">
-        {slides.map((slide: any, index: number) => index === current && (
+    <section className="relative w-full overflow-hidden bg-background">
+      <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: "radial-gradient(ellipse at 30% 55%, color-mix(in oklab, var(--hot) 45%, transparent), transparent 60%)" }} />
+
+      <Band className="top-6 -rotate-[6deg] bg-hot text-hot-foreground md:top-10" />
+      <Band reverse className="bottom-6 rotate-[3deg] bg-primary text-primary-foreground md:bottom-10" />
+
+      <div className="relative z-20 mx-auto grid min-h-[560px] max-w-7xl items-center gap-8 px-4 py-28 md:min-h-[640px] md:grid-cols-2 md:py-32">
+        <AnimatePresence mode="wait">
           <motion.div
-            key={slide.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key={slide?.id ?? "fallback"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
-            className="absolute inset-0"
+            transition={{ duration: 0.6 }}
           >
-            {/* Background Media */}
-            <div className="absolute inset-0 z-0">
-              {slide.tipo === 'video' && slide.media_url ? (
-                <video 
-                  src={slide.media_url} 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline 
-                  className="h-full w-full object-contain md:object-cover"
-                />
-              ) : slide.tipo === 'image' && slide.media_url ? (
-                <img
-                  src={slide.media_url}
-                  alt={slide.titulo}
-                  className="h-full w-full object-contain md:object-cover"
-                  loading={index === 0 ? "eager" : "lazy"}
-                  fetchPriority={index === 0 ? "high" : "auto"}
-                />
-              ) : (
-                <div className="h-full w-full bg-navy">
-                  <div 
-                    className="absolute inset-0 opacity-40"
-                    style={{
-                      backgroundImage: "radial-gradient(circle at center, var(--primary), transparent 70%)"
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center">
-              <motion.h1 
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-                className="max-w-4xl font-display text-5xl font-black uppercase tracking-tighter text-white md:text-7xl lg:text-8xl"
-              >
-                {slide.titulo.split(' ').map((word: string, i: number, arr: string[]) => {
-                  const isHighlighted = arr.length > 2 ? i >= arr.length - 2 : i === arr.length - 1;
-                  return (
-                    <span key={i} className={isHighlighted ? "text-primary" : ""}>
-                      {word}{" "}
-                    </span>
-                  );
-                })}
-              </motion.h1>
-              
-              {slide.subtitulo && (
-                <motion.p 
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.8 }}
-                  className="mt-6 max-w-2xl font-body text-lg font-medium text-white/90 md:text-xl lg:text-2xl"
-                >
-                  {slide.subtitulo}
-                </motion.p>
-              )}
-              
-            </div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-card px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-hot" /> INSPIRE-SE · Ofertas
+            </span>
+            <h1 className="mt-4 font-impact text-5xl uppercase leading-[0.95] md:text-7xl">
+              {palavras.map((w, i) => (
+                <span key={i} className={i >= Math.ceil(palavras.length / 2) ? "text-lime" : ""}>{w} </span>
+              ))}
+            </h1>
+            {menorPreco !== null && (
+              <p className="mt-3 font-impact text-3xl uppercase text-hot md:text-5xl">
+                A partir de {brl(menorPreco)}
+              </p>
+            )}
+            {slide?.subtitulo && (
+              <p className="mt-4 max-w-md text-sm text-muted-foreground md:text-base">{slide.subtitulo}</p>
+            )}
+            <Link
+              to="/produtos"
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-xs font-black uppercase tracking-[0.18em] text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-105"
+            >
+              Ver ofertas <ArrowRight className="h-4 w-4" />
+            </Link>
           </motion.div>
-        ))}
-      </AnimatePresence>
+        </AnimatePresence>
 
-      {/* Navigation Controls */}
+        <div className="relative hidden aspect-square md:block">
+          {slide?.tipo === "video" && slide.media_url ? (
+            <video src={slide.media_url} autoPlay loop muted playsInline className="h-full w-full rounded-3xl object-cover" />
+          ) : slide?.tipo === "image" && slide.media_url ? (
+            <img src={slide.media_url} alt={slide.titulo} className="h-full w-full rounded-3xl object-cover" fetchPriority="high" />
+          ) : (
+            <img src={logoInspire} alt="INSPIRE-SE" className="mx-auto h-full w-3/4 object-contain opacity-90 invert" />
+          )}
+        </div>
+      </div>
+
       {slides.length > 1 && (
         <>
-          <div className="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2">
-            {slides.map((_: any, i: number) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`h-1 transition-all duration-300 rounded-full ${i === current ? 'w-5 bg-primary' : 'w-1.5 bg-white/30 hover:bg-white/50'}`}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={prevSlide}
-            className="absolute left-2 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-white/5 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/40 md:left-10 md:p-2"
-            aria-label="Slide anterior"
-          >
-            <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
+          <button onClick={prevSlide} className="absolute left-2 top-1/2 z-30 -translate-y-1/2 rounded-full border border-border bg-card/60 p-2 text-foreground backdrop-blur-sm hover:border-primary" aria-label="Slide anterior">
+            <ChevronLeft className="h-4 w-4" />
           </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-white/5 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/40 md:right-10 md:p-2"
-            aria-label="Próximo slide"
-          >
-            <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
+          <button onClick={nextSlide} className="absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-full border border-border bg-card/60 p-2 text-foreground backdrop-blur-sm hover:border-primary" aria-label="Próximo slide">
+            <ChevronRight className="h-4 w-4" />
           </button>
         </>
       )}
@@ -252,10 +232,10 @@ function ProductSection({ title, highlightIndex, products, subtitle, isPromo, em
   return (
     <section className="py-12 md:py-20">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="mb-8 text-center md:mb-16">
-          <h2 className="font-display text-4xl font-black uppercase tracking-tighter md:text-5xl lg:text-6xl">
+        <div className="mb-8 flex items-end justify-between gap-4 md:mb-10">
+          <h2 className="font-impact text-4xl uppercase md:text-6xl">
             {title.map((word, i) => (
-              <span key={i} className={i === highlightIndex ? "text-primary" : ""}>
+              <span key={i} className={i === highlightIndex && isPromo ? "text-lime" : ""}>
                 {word}{" "}
               </span>
             ))}
@@ -269,7 +249,7 @@ function ProductSection({ title, highlightIndex, products, subtitle, isPromo, em
 
         {products.length > 0 ? (
           <>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8">
+            <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4">
               {products.map((p, i) => (
                 <ProductCard key={p.id} p={p} priority={i < 4} />
               ))}
@@ -360,7 +340,7 @@ function CategoriesSection({ categorias, produtos }: { categorias: Categoria[]; 
     <section className="py-12 md:py-32 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-12 flex items-end justify-between md:mb-16">
-          <h2 className="font-display text-4xl font-black uppercase tracking-tighter md:text-5xl lg:text-6xl">
+          <h2 className="font-impact text-4xl uppercase md:text-6xl">
             Categorias
           </h2>
           
